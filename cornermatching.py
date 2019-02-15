@@ -117,6 +117,7 @@ def descriptorExtractor(img, featureList, l = 21):
     patches = []
     for point in featureList:
         patch = patchFinder(point[0],point[1],img,featureList,l)
+        #Checks to see if patchFinder returned an appropriate patch. Only append if true. 
         if(len(patch)> 0):
             patches.append(patch)
 
