@@ -41,9 +41,9 @@ def harris_response(img, gmean = 5,var =2):
 
 	return H
 
-def getmaxima (H,threshold):
+def getmaxima (H,threshold,localSearchWidth = 3):
     maxima = []
-    localSearchWidth = 21
+
     p = localSearchWidth
 
     width,height = H.shape
