@@ -73,7 +73,7 @@ def nonmaxsup(H,n=100,c=.5):
         for row1 in maxima:
             if (row[z] < c*row1[z]):
                 dist = np.sqrt((row[x]-row1[x])**2 + (row[y]-row1[y])**2 )
-                if (dist < min):
+                if (dist < min) and (dist>0):
                     min = dist
                 #xmin = row1[x]
                 #ymin = row1[y]
