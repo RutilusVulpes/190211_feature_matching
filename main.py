@@ -6,8 +6,8 @@ import cornermatching as cm
 I1 = plt.imread('im1.jpg')
 I1 = I1.mean(axis=2)
 
-I2 = plt.imread('im2.jpg')
-I2 = I2.mean(axis=2)
+#I2 = plt.imread('im2.jpg')
+#I2 = I2.mean(axis=2)
 ##
 
 # Gauss kernel
@@ -19,24 +19,25 @@ I1 = cm.convolve(I1, g_kernal)
 #plt.show()
 
 #plt.imshow(I2, cmap="gray")
-I2 = cm.convolve(I2, g_kernal)
+#I2 = cm.convolve(I2, g_kernal)
 #plt.show()
 
 H1 = cm.harris_response(I1)
-H2 = cm.harris_response(I2)
+#H2 = cm.harris_response(I2)
 
 H1sup = cm.nonmaxsup(H1)
-H2sup = cm.nonmaxsup(H2)
+#H2sup = cm.nonmaxsup(H2)
 
 
 #print(np.matrix(H1))
 #print(np.matrix(H2))
 
+H1descrips = cm.descriptorExtractor(I1,H1sup)
+#H2descrips = cm.descriptorExtractor(I2,H2sup)
 
-plt.imshow(I1, cmap="gray")
-for point in H1sup:
-    plt.scatter(point[1],point[0], c= 'r', s = 10)
-
-plt.show()
+#plt.imshow(I1, cmap="gray")
+#for point in H1sup:
+#    plt.scatter(point[1],point[0], c= 'r', s = 10)
+#plt.show()
 #plt.imshow(H2, cmap="gray")
 #plt.show()

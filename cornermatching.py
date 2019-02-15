@@ -84,4 +84,37 @@ def nonmaxsup(H,n=100,c=.9):
     mindistance.sort(key=lambda x:x[2])
     return mindistance[-n:]
 
-#def descriptorExtractor(img, featureList):
+
+def descriptorExtractor(img, featureList, l = 21):
+    def patchFinder(i,j,img,featureList,l):
+        patch = np.zeros((l,l))
+        patchX = 0
+        floor = int(l/2)
+        ceiling = int(l/2)+1
+
+        #pythons stupid.
+        i = int(i)
+        j = int(j)
+
+        #find patches, return 0 if out of bounds (this could be improved by not just returning 0)
+        for x in range(i-floor,i+ceiling):
+            if x < 0 or x >= width:
+                return 0
+            else:
+                patchY = 0
+                for y in range(j-floor,j+ceiling):
+                    if y < 0 or y >= height:
+                        return 0
+                    else:
+                        patch[patchX][patchY] = img[x][y]
+                        patchY +=1
+                patchX +=1
+        return patch
+
+
+    width,height = img.shape
+
+    for point in featureList:
+        patch = patchFinder(point[0],point[1],img,featureList,l)
+        if(patch != 0)
+            print(patch)
