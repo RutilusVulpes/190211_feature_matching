@@ -43,22 +43,25 @@ def harris_response(img, gmean = 5,var =2):
 
 def getmaxima (H,threshold):
     maxima = []
+    localSearchWidth = 21
+    p = localSearchWidth
+
     width,height = H.shape
-    for i in range(1,width-1,3):
-        for j in range(1,height-1,3):
+    for i in range(int(p/2)+1,width-int(p/2)+1,p):
+        for j in range(int(p/2)+1,height-int(p/2)+1,p):
             if H[i,j] < threshold:
                 continue
             else:
                 localMax = [0,0,0]
-                for x in range(i-1,i+2):
-                    for y in range(j-1,j+2):
+                for x in range(i-int(p/2),i+int(p/2)+1):
+                    for y in range(j-int(p/2),j+int(p/2)+1):
                         if(H[x][y] > localMax[2]):
                             localMax = [x,y, H[x][y]]
                 maxima.append(localMax)
     return maxima
 
 
-def nonmaxsup(H,n=100,c=.5):
+def nonmaxsup(H,n=100,c=.9):
 
     mindistance = []
     threshold = np.mean(H) + np.std(H)
@@ -69,7 +72,6 @@ def nonmaxsup(H,n=100,c=.5):
     z = 2
     for row in maxima:
         min = np.inf
-
         for row1 in maxima:
             if (row[z] < c*row1[z]):
                 dist = np.sqrt((row[x]-row1[x])**2 + (row[y]-row1[y])**2 )
@@ -79,7 +81,6 @@ def nonmaxsup(H,n=100,c=.5):
                 #ymin = row1[y]
 
         mindistance.append([row[x],row[y],min])
-
     mindistance.sort(key=lambda x:x[2])
     return mindistance[-n:]
 

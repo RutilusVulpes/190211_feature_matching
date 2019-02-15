@@ -28,9 +28,7 @@ H2 = cm.harris_response(I2)
 H1sup = cm.nonmaxsup(H1)
 H2sup = cm.nonmaxsup(H2)
 
-print(len(H1sup),len(H2sup))
-for thing in H1sup:
-    print(thing)
+
 #print(np.matrix(H1))
 #print(np.matrix(H2))
 
