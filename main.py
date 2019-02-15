@@ -33,6 +33,8 @@ H1sup = cm.nonmaxsup(H1)
 #print(np.matrix(H2))
 
 H1descrips = cm.descriptorExtractor(I1,H1sup)
+
+print(H1descrips)
 #H2descrips = cm.descriptorExtractor(I2,H2sup)
 
 #plt.imshow(I1, cmap="gray")

@@ -99,12 +99,12 @@ def descriptorExtractor(img, featureList, l = 21):
         #find patches, return 0 if out of bounds (this could be improved by not just returning 0)
         for x in range(i-floor,i+ceiling):
             if x < 0 or x >= width:
-                return 0
+                return []
             else:
                 patchY = 0
                 for y in range(j-floor,j+ceiling):
                     if y < 0 or y >= height:
-                        return 0
+                        return []
                     else:
                         patch[patchX][patchY] = img[x][y]
                         patchY +=1
@@ -114,7 +114,10 @@ def descriptorExtractor(img, featureList, l = 21):
 
     width,height = img.shape
 
+    patches = []
     for point in featureList:
         patch = patchFinder(point[0],point[1],img,featureList,l)
-        if(patch != 0)
-            print(patch)
+        if(len(patch)> 0):
+            patches.append(patch)
+
+    return patches
