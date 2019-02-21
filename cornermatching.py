@@ -1,6 +1,74 @@
 import numpy as np
 import math as mt
 
+def sum_squared_error(D1,D2):
+
+    sse = 0.0
+
+    if(D1.shape == D2.shape):
+
+        mean_D1 = np.mean(D1)
+        mean_D2 = np.mean(D2)
+        std_D1 = np.std(D1)
+        std_D2 = np.std(D2)
+
+        for i in range(len(D1)):
+            for j in range(len(D2[i])):
+                D1_hat = (D1[i][j] - mean_D1)/std_D1
+                D2_hat = (D2[i][j] - mean_D2)/std_D2
+                sse += (D1_hat - D2_hat)**2
+    else:
+        return np.inf
+
+    return sse
+
+def get_best_matches(descriptors_I1, descriptors_I2):
+    best_sse = np.inf
+    best_descriptor = None
+    best_matches = []
+
+    for descriptor_I1 in descriptors_I1:
+        for descriptor_I2 in descriptors_I2:
+            sse = sum_squared_error(descriptor_I1[0], descriptor_I2[0])
+            if(sse < best_sse):
+                best_sse = sse
+                best_descriptor = descriptor_I2
+        best_matches.append([best_descriptor,best_sse])
+
+        best_sse = np.inf
+
+    return best_matches
+
+def get_secondbest_matches(descriptors_I1, descriptors_I2, best_matches):
+    best_sse = np.inf
+    best_descriptor = None
+    secondbest_matches = []
+
+    current_index = 0
+
+    for descriptor_I1 in descriptors_I1:
+        for descriptor_I2 in descriptors_I2:
+            sse = sum_squared_error(descriptor_I1[0], descriptor_I2[0])
+            if(sse < best_sse and sse != best_matches[current_index][1]):
+                best_sse = sse
+                best_descriptor = descriptor_I2
+        secondbest_matches.append([best_descriptor, best_sse])
+
+        current_index += 1
+        best_sse = np.inf
+
+    return secondbest_matches
+
+def filter_matches(best_matches, secondbest_matches, descriptors_I1, r=0.7):
+
+    filtered_matches = []
+
+    for x in range(len(best_matches)):
+        if(best_matches[x][1] > r*secondbest_matches[x][1]):
+            filtered_matches.append([descriptors_I1[x], best_matches[x]])
+
+    return filtered_matches
+
 def convolve(g,h): # h is kernel, g is the image
     I_gray_copy = g.copy()
 
@@ -41,7 +109,7 @@ def harris_response(img, gmean = 5,var =2):
 
 	return H
 
-def getmaxima (H,threshold,localSearchWidth = 3):
+def getmaxima (H,threshold,localSearchWidth = 21):
     maxima = []
 
     p = localSearchWidth
@@ -53,13 +121,12 @@ def getmaxima (H,threshold,localSearchWidth = 3):
                 continue
             else:
                 localMax = [0,0,0]
-                for x in range(i-int(p/2),i+int(p/2)+1):
-                    for y in range(j-int(p/2),j+int(p/2)+1):
+                for x in range(i-int(p/2),i+int(p/2)):
+                    for y in range(j-int(p/2),j+int(p/2)):
                         if(H[x][y] > localMax[2]):
                             localMax = [x,y, H[x][y]]
                 maxima.append(localMax)
     return maxima
-
 
 def nonmaxsup(H,n=100,c=.9):
 
@@ -84,9 +151,9 @@ def nonmaxsup(H,n=100,c=.9):
     mindistance.sort(key=lambda x:x[2])
     return mindistance[-n:]
 
-
 def descriptorExtractor(img, featureList, l = 21):
     def patchFinder(i,j,img,featureList,l):
+        descriptor = [i,j,np.zeros((l,l))]
         patch = np.zeros((l,l))
         patchX = 0
         floor = int(l/2)
@@ -109,7 +176,10 @@ def descriptorExtractor(img, featureList, l = 21):
                         patch[patchX][patchY] = img[x][y]
                         patchY +=1
                 patchX +=1
-        return patch
+        descriptor[0] = patch
+        descriptor[1] = i
+        descriptor[2] = j
+        return descriptor
 
 
     width,height = img.shape
@@ -117,8 +187,18 @@ def descriptorExtractor(img, featureList, l = 21):
     patches = []
     for point in featureList:
         patch = patchFinder(point[0],point[1],img,featureList,l)
-        #Checks to see if patchFinder returned an appropriate patch. Only append if true. 
+        #Checks to see if patchFinder returned an appropriate patch. Only append if true.
         if(len(patch)> 0):
             patches.append(patch)
 
     return patches
+
+def filter_matches(best_matches, secondbest_matches, descriptors_I1, r=0.7):
+
+    filtered_matches = []
+
+    for x in range(len(best_matches)):
+        if(best_matches[x][1] > r*secondbest_matches[x][1]):
+            filtered_matches.append([descriptors_I1[x], best_matches[x]])
+
+    return filtered_matches
