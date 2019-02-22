@@ -37,10 +37,11 @@ secondbest_matches = cm.get_secondbest_matches(H1descrips, H2descrips, best_matc
 
 filtered_matches = cm.filter_matches(best_matches, secondbest_matches, H1descrips)
 
+#print(filtered_matches[0][0][1],filtered_matches[0][0][2])
 for match in filtered_matches:
-    print(match[0][1],match[1][1])
-#print(secondbest_matches)
-#plt.imshow(I1, cmap="gray")
+    print(match[0][1:],match[1][0][1:])
+
+
 #for point in H1sup:
 #    plt.scatter(point[1],point[0], c= 'r', s = 10)
 #plt.show()

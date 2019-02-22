@@ -59,12 +59,12 @@ def get_secondbest_matches(descriptors_I1, descriptors_I2, best_matches):
 
     return secondbest_matches
 
-def filter_matches(best_matches, secondbest_matches, descriptors_I1, r=0.7):
+def filter_matches(best_matches, secondbest_matches, descriptors_I1, r=0.5):
 
     filtered_matches = []
 
     for x in range(len(best_matches)):
-        if(best_matches[x][1] > r*secondbest_matches[x][1]):
+        if(best_matches[x][1] < r*secondbest_matches[x][1]):
             filtered_matches.append([descriptors_I1[x], best_matches[x]])
 
     return filtered_matches
@@ -109,7 +109,7 @@ def harris_response(img, gmean = 5,var =2):
 
 	return H
 
-def getmaxima (H,threshold,localSearchWidth = 21):
+def getmaxima (H,threshold,localSearchWidth = 49):
     maxima = []
 
     p = localSearchWidth
@@ -181,10 +181,9 @@ def descriptorExtractor(img, featureList, l = 21):
         descriptor[2] = j
         return descriptor
 
-
     width,height = img.shape
-
     patches = []
+
     for point in featureList:
         patch = patchFinder(point[0],point[1],img,featureList,l)
         #Checks to see if patchFinder returned an appropriate patch. Only append if true.
